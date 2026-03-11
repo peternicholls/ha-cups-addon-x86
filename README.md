@@ -57,7 +57,7 @@ All executable scripts under `rootfs/etc/s6-overlay/s6-rc.d/` must follow two ru
 1. **Shebang**: use `#!/usr/bin/with-contenv bashio`. This injects the container environment variables (stored by s6 in `/var/run/s6/container_environment/`) into the process before execution. `#!/usr/bin/env bashio` does **not** do this.
 2. **`exec` for longruns**: `run` scripts for `longrun` services must call their daemon with `exec` as the final command (e.g. `exec cupsd -f`). This replaces the bash process in-place so s6-supervise is attached to the daemon directly, ensuring correct signal delivery and restart behaviour.
 
-Oneshot `up` files may use either a shebang script or a raw command (no shebang); both are valid s6-rc formats.
+Oneshot `up` files should prefer a raw command or an explicit interpreter invocation such as `/usr/bin/with-contenv /bin/bash /usr/share/script.sh`. Avoid placing shell builtins directly in an `up` file; if the logic needs shell features, move it into a real shell script and call that script from the `up` file.
 
 ## Acknowledgements
 

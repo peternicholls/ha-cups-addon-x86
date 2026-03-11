@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-03-11
+
+### Fixed
+- `initialization/up` now uses a direct command instead of shell builtins in the oneshot `up` file, fixing addon startup failure on Home Assistant OS 17.1 (`s6-rc-oneshot-run: fatal: unable to exec set`)
+
+### Documentation
+- README s6 guidance now recommends raw commands or explicit interpreter invocations for oneshot `up` files
+
 ## [1.2.0] - 2026-02-23
 
 ### Changed

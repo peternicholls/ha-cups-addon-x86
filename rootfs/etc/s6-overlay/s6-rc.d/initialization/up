@@ -1,5 +1,2 @@
-#!/usr/bin/with-contenv bashio
-set -euo pipefail
-
-mkdir -p /var/run/dbus
+/bin/mkdir -p /var/run/dbus
 
