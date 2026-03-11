@@ -14,6 +14,28 @@ set -euo pipefail
 
 bashio::log.info "Configuring CUPS and Avahi..."
 
+restore_cups_backup_if_needed() {
+    if [ ! -d /data/cups-backup ]; then
+        return 0
+    fi
+
+    if [ -f /data/cups/printers.conf ] || [ -f /data/cups/classes.conf ]; then
+        return 0
+    fi
+
+    bashio::log.warning "Persistent printer definitions missing; restoring CUPS state from /data/cups-backup"
+    cp -a /data/cups-backup/. /data/cups/
+}
+
+snapshot_cups_state() {
+    local snapshot_dir
+    snapshot_dir=$(mktemp -d /data/cups-backup.tmp.XXXXXX)
+
+    cp -a /etc/cups/. "$snapshot_dir"/
+    rm -rf /data/cups-backup
+    mv "$snapshot_dir" /data/cups-backup
+}
+
 hostname=$(bashio::info.hostname)
 
 # Read user-configurable options
@@ -55,10 +77,14 @@ if [ ! -L /etc/cups ]; then
     ln -s /data/cups /etc/cups
 fi
 
+restore_cups_backup_if_needed
+
 # Render CUPS config (always refresh so hostname/URL changes are picked up)
 echo "$config" | tempio \
     -template /usr/share/cupsd.conf.tempio \
     -out /etc/cups/cupsd.conf
+
+snapshot_cups_state
 
 # Create or update the admin user at runtime
 if ! id "$admin_user" &>/dev/null; then

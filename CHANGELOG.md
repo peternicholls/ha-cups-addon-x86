@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2026-03-11
+
+### Fixed
+- Added explicit CUPS state snapshot and restore logic under `/data/cups-backup` so printer definitions survive future upgrades even if the live `/data/cups` state is missing or incomplete
+- Added a `cups-server` shutdown hook to snapshot current CUPS state before service stop
+
 ## [1.2.1] - 2026-03-11
 
 ### Fixed
